@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Game of Thrones - Personajes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="mb-4">Personajes de Game of Thrones</h2>
+        <div class="row" id="api-iterator"></div>
+    </div>
+    <script>
+        let limite = 30;
+        let n = 0;
+        let cardGoT = "";
+        for (let i = 0; i < limite; i++) {
+            n += 1;
+            $.ajax({
+                url: `https://www.anapioficeandfire.com/api/characters/${n}`,
+                success: function(result) {
+                    if (result.name === "") return;
+                    let titles = "";
+                    let aliases = "";
+                    for (let j = 0; j < result.titles.length; j++) {
+                        if (result.titles[j] !== "") {
+                            titles += `<p class="mb-0">${result.titles[j]}</p>`;
+                        }
+                    }
+                    for (let j = 0; j < result.aliases.length; j++) {
+                        if (result.aliases[j] !== "") {
+                            aliases += `<p class="mb-0">${result.aliases[j]}</p>`;
+                        }
+                    }
+                    cardGoT += `
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">${result.name}</h5>
+                                    <p><strong>Género:</strong> ${result.gender}</p>
+                                    <p><strong>Cultura:</strong> ${result.culture}</p>
+                                    <p><strong>Nacido:</strong> ${result.born}</p>
+                                    <p><strong>Actor:</strong> ${result.playedBy[0] || "Desconocido"}</p>
+                                    <hr>
+                                    <p><strong>Títulos:</strong></p>
+                                    ${titles || "<p class='text-muted'>Sin títulos</p>"}
+                                    <hr>
+                                    <p><strong>Alias:</strong></p>
+                                    ${aliases || "<p class='text-muted'>Sin alias</p>"}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    $("#api-iterator").html(cardGoT);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
